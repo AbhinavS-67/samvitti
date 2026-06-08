@@ -35,6 +35,41 @@ def render_sidebar():
         </div>
         """, unsafe_allow_html=True)
 
+        # Data Scope Selector
+        st.markdown('<div style="margin-top:0.2rem; margin-bottom:0.4rem; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:rgba(255,255,255,0.2); padding-left:4px;">Data Scope</div>', unsafe_allow_html=True)
+        scope = st.selectbox(
+            "Data Scope",
+            ["Market Indices", "Custom Search"],
+            key="data_scope",
+            label_visibility="collapsed"
+        )
+
+        if scope == "Custom Search":
+            default_options = [
+                "RELIANCE.NS", "TCS.NS", "HDFCBANK.NS", "INFOSYS.NS", "SBIN.NS",
+                "AAPL", "MSFT", "NVDA", "GOOGL", "AMZN", "TSLA"
+            ]
+            if "custom_tickers" not in st.session_state:
+                st.session_state.custom_tickers = ["RELIANCE.NS", "AAPL", "MSFT", "TCS.NS"]
+
+            new_ticker = st.text_input("Add Ticker (e.g. INFY.NS, TSLA)", key="new_ticker_input")
+            if new_ticker:
+                clean_ticker = new_ticker.strip().upper()
+                if clean_ticker not in st.session_state.custom_tickers:
+                    st.session_state.custom_tickers.append(clean_ticker)
+                    st.toast(f"Added {clean_ticker} to custom list!")
+                    st.session_state.new_ticker_input = ""
+                    st.rerun()
+
+            selected_tickers = st.multiselect(
+                "Active Stocks",
+                options=list(set(st.session_state.custom_tickers + default_options)),
+                default=st.session_state.custom_tickers,
+                key="active_custom_tickers"
+            )
+            st.session_state.custom_tickers = selected_tickers
+            st.markdown("<div style='margin-bottom: 1rem;'></div>", unsafe_allow_html=True)
+
         # Navigation
         pages = [
             ("Dashboard",       "🏠", "Overview & signals"),

@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.graph_objects as go
 from data.fetcher import (
     fetch_stock_data, assign_sectors, fetch_fundamentals,
-    NIFTY50, SP500_SAMPLE, score_label
+    NIFTY50, SP500_SAMPLE, score_label, get_active_tickers
 )
 from components.styles import clean_html
 
@@ -16,12 +16,7 @@ def render():
     </div>
     """, unsafe_allow_html=True)
 
-    market = st.session_state.get("market", "India (NSE)")
-    tickers = []
-    if market in ["India (NSE)", "Both"]:
-        tickers += NIFTY50
-    if market in ["US (S&P 500)", "Both"]:
-        tickers += SP500_SAMPLE
+    tickers = get_active_tickers()
 
     # ── Filters ────────────────────────────────────────────────────────────
     fcol1, fcol2, fcol3, fcol4 = st.columns([2,2,2,2])
@@ -94,13 +89,14 @@ def render():
             sig_cls     = "badge-bull" if signal == "Strong" else "badge-gold" if signal == "Moderate" else "badge-gray"
             ret_color   = "#2DD4BF" if r["Ret_1M"] >= 0 else "#E05C5C"
 
+            row_currency = "₹" if ".NS" in r.get("Full_Ticker", "") else "$"
             table_html += f"""
             <tr>
                 <td style="color:rgba(255,255,255,0.25);font-size:11px;">{i}</td>
                 <td><span class="ticker-cell">{r['Ticker']}</span></td>
                 <td style="font-size:12px;color:rgba(255,255,255,0.4);">{r.get('Sector','—')}</td>
-                <td><span class="mono">{currency}{r['Price']:,.2f}</span></td>
-                <td><span class="mono" style="color:rgba(255,255,255,0.4);">{currency}{r['52W_High']:,.2f}</span></td>
+                <td><span class="mono">{row_currency}{r['Price']:,.2f}</span></td>
+                <td><span class="mono" style="color:rgba(255,255,255,0.4);">{row_currency}{r['52W_High']:,.2f}</span></td>
                 <td><span class="mono" style="color:#2DD4BF;">{r['Pct_From_High']:+.2f}%</span></td>
                 <td><span class="mono">{r['RSI']:.0f}</span></td>
                 <td>

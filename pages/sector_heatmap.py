@@ -3,7 +3,7 @@ import plotly.graph_objects as go
 import plotly.express as px
 import pandas as pd
 import numpy as np
-from data.fetcher import fetch_stock_data, assign_sectors, compute_sector_summary, NIFTY50, SP500_SAMPLE
+from data.fetcher import fetch_stock_data, assign_sectors, compute_sector_summary, NIFTY50, SP500_SAMPLE, get_active_tickers
 from components.styles import clean_html
 
 
@@ -15,12 +15,7 @@ def render():
     </div>
     """, unsafe_allow_html=True)
 
-    market = st.session_state.get("market", "India (NSE)")
-    tickers = []
-    if market in ["India (NSE)", "Both"]:
-        tickers += NIFTY50
-    if market in ["US (S&P 500)", "Both"]:
-        tickers += SP500_SAMPLE
+    tickers = get_active_tickers()
 
     metric = st.selectbox("Color by", ["Avg Momentum", "Avg RSI", "Breakout %", "Breakdown %"], key="hm_metric")
 

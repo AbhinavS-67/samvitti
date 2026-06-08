@@ -5,7 +5,7 @@ import plotly.express as px
 from datetime import datetime
 from data.fetcher import (
     fetch_stock_data, assign_sectors, compute_sector_summary,
-    NIFTY50, SP500_SAMPLE, score_label
+    NIFTY50, SP500_SAMPLE, score_label, get_active_tickers
 )
 from components.styles import clean_html
 
@@ -49,11 +49,7 @@ def render():
     st.session_state["view_mode"] = view_mode
 
     # ── Fetch data ─────────────────────────────────────────────────────────
-    tickers = []
-    if market in ["India (NSE)", "Both"]:
-        tickers += NIFTY50
-    if market in ["US (S&P 500)", "Both"]:
-        tickers += SP500_SAMPLE
+    tickers = get_active_tickers()
 
     with st.spinner("Fetching market data…"):
         df = fetch_stock_data(tickers[:80])  # cap for speed
@@ -72,7 +68,7 @@ def render():
     st.markdown(
         kpi("52W Breakouts", len(highs), f"↑ Volume confirmed: {len(highs[highs['Vol_Confirmed']==True])}", "up", "teal") +
         kpi("52W Breakdowns", len(lows), f"↓ Oversold (RSI<30): {len(lows[lows['RSI']<30])}", "down", "red") +
-        kpi("Stocks Tracked", len(df), f"Indices: {market}", "neutral", "gold") +
+        kpi("Stocks Tracked", len(df), "Custom Search" if st.session_state.get("data_scope") == "Custom Search" else f"Indices: {market}", "neutral", "gold") +
         kpi("Avg Momentum", f"{df['Momentum'].mean():.0f}", "Score out of 100", "neutral", "blue"),
         unsafe_allow_html=True
     )

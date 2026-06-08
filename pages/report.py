@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 from io import BytesIO
-from data.fetcher import fetch_stock_data, assign_sectors, NIFTY50, SP500_SAMPLE, score_label
+from data.fetcher import fetch_stock_data, assign_sectors, NIFTY50, SP500_SAMPLE, score_label, get_active_tickers
 
 
 def generate_pdf_report(highs_df, lows_df, market, today):
@@ -121,12 +121,7 @@ def render():
     </div>
     """, unsafe_allow_html=True)
 
-    market = st.session_state.get("market", "India (NSE)")
-    tickers = []
-    if market in ["India (NSE)", "Both"]:
-        tickers += NIFTY50
-    if market in ["US (S&P 500)", "Both"]:
-        tickers += SP500_SAMPLE
+    tickers = get_active_tickers()
 
     col1, col2 = st.columns([3, 2], gap="large")
 

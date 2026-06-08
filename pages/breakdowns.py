@@ -1,6 +1,6 @@
 import streamlit as st
 import plotly.graph_objects as go
-from data.fetcher import fetch_stock_data, assign_sectors, NIFTY50, SP500_SAMPLE
+from data.fetcher import fetch_stock_data, assign_sectors, NIFTY50, SP500_SAMPLE, get_active_tickers
 from components.styles import clean_html
 
 
@@ -12,12 +12,7 @@ def render():
     </div>
     """, unsafe_allow_html=True)
 
-    market = st.session_state.get("market", "India (NSE)")
-    tickers = []
-    if market in ["India (NSE)", "Both"]:
-        tickers += NIFTY50
-    if market in ["US (S&P 500)", "Both"]:
-        tickers += SP500_SAMPLE
+    tickers = get_active_tickers()
 
     fcol1, fcol2, fcol3 = st.columns(3)
     with fcol1:
@@ -94,13 +89,14 @@ def render():
             else:
                 sig = '<span class="badge badge-gray">Neutral</span>'
 
+            row_currency = "₹" if ".NS" in r.get("Full_Ticker", "") else "$"
             table_html += f"""
             <tr>
                 <td style="color:rgba(255,255,255,0.25);font-size:11px;">{i}</td>
                 <td><span class="ticker-cell">{r['Ticker']}</span></td>
                 <td style="font-size:12px;color:rgba(255,255,255,0.4);">{r.get('Sector','—')}</td>
-                <td><span class="mono">{currency}{r['Price']:,.2f}</span></td>
-                <td><span class="mono" style="color:rgba(255,255,255,0.4);">{currency}{r['52W_Low']:,.2f}</span></td>
+                <td><span class="mono">{row_currency}{r['Price']:,.2f}</span></td>
+                <td><span class="mono" style="color:rgba(255,255,255,0.4);">{row_currency}{r['52W_Low']:,.2f}</span></td>
                 <td><span class="mono" style="color:#E05C5C;">{r['Pct_From_Low']:+.1f}%</span></td>
                 <td><span class="mono" style="color:{rsi_color};">{r['RSI']:.0f}</span></td>
                 <td><span class="mono" style="color:{ret_color};">{r['Ret_5D']:+.1f}%</span></td>

@@ -149,6 +149,21 @@ def fetch_fundamentals(ticker: str) -> dict:
         return {}
 
 
+def get_active_tickers() -> list:
+    """Return the list of tickers to fetch based on current session state scope."""
+    scope = st.session_state.get("data_scope", "Market Indices")
+    if scope == "Custom Search":
+        return st.session_state.get("custom_tickers", ["RELIANCE.NS", "AAPL", "MSFT", "TCS.NS"])
+    else:
+        market = st.session_state.get("market", "India (NSE)")
+        tickers = []
+        if market in ["India (NSE)", "Both"]:
+            tickers += NIFTY50
+        if market in ["US (S&P 500)", "Both"]:
+            tickers += SP500_SAMPLE
+        return tickers
+
+
 def get_sector(ticker: str, market: str) -> str:
     if market == "India (NSE)":
         return SECTOR_MAP_IN.get(ticker, "Other")
@@ -156,10 +171,16 @@ def get_sector(ticker: str, market: str) -> str:
 
 
 def assign_sectors(df: pd.DataFrame, market: str) -> pd.DataFrame:
-    if market == "India (NSE)":
-        df["Sector"] = df["Full_Ticker"].map(SECTOR_MAP_IN).fillna("Other")
+    scope = st.session_state.get("data_scope", "Market Indices")
+    if scope == "Custom Search":
+        df["Sector"] = df["Full_Ticker"].apply(
+            lambda t: SECTOR_MAP_IN.get(t, "Other/Custom") if t.endswith(".NS") else "US/Custom"
+        )
     else:
-        df["Sector"] = "—"
+        if market == "India (NSE)":
+            df["Sector"] = df["Full_Ticker"].map(SECTOR_MAP_IN).fillna("Other")
+        else:
+            df["Sector"] = "—"
     return df
 
 
