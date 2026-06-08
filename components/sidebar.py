@@ -52,16 +52,15 @@ def render_sidebar():
             if "custom_tickers" not in st.session_state:
                 st.session_state.custom_tickers = ["RELIANCE.NS", "AAPL", "MSFT", "TCS.NS"]
 
-            def add_ticker_callback():
-                val = st.session_state.new_ticker_input
-                if val:
-                    clean_ticker = val.strip().upper()
+            with st.form("add_ticker_form", clear_on_submit=True, border=False):
+                new_ticker = st.text_input("Add Ticker (e.g. INFY.NS, TSLA)", key="new_ticker_input")
+                submitted = st.form_submit_button("Add Stock", use_container_width=True)
+                if submitted and new_ticker:
+                    clean_ticker = new_ticker.strip().upper()
                     if clean_ticker not in st.session_state.custom_tickers:
                         st.session_state.custom_tickers.append(clean_ticker)
                         st.toast(f"Added {clean_ticker} to custom list!")
-                    st.session_state.new_ticker_input = ""
-
-            st.text_input("Add Ticker (e.g. INFY.NS, TSLA)", key="new_ticker_input", on_change=add_ticker_callback)
+                        st.rerun()
 
             selected_tickers = st.multiselect(
                 "Active Stocks",
