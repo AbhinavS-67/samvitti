@@ -35,23 +35,51 @@ def inject_styles():
     [data-testid="stHeader"] {
         background-color: rgba(0, 0, 0, 0) !important;
         background: transparent !important;
+        height: 0px !important;
+        overflow: visible !important;
     }
     div[data-testid="stDecoration"] { display: none !important; }
 
     /* Expose and style the sidebar collapse/expand toggle buttons */
-    [data-testid="collapsedControl"],
+    [data-testid="collapsedControl"] {
+        display: flex !important;
+        visibility: visible !important;
+        position: fixed !important;
+        top: 16px !important;
+        left: 16px !important;
+        z-index: 999999 !important;
+        background: rgba(12, 17, 28, 0.95) !important;
+        border: 1px solid rgba(201, 168, 76, 0.35) !important;
+        border-radius: 8px !important;
+        width: 38px !important;
+        height: 38px !important;
+        align-items: center !important;
+        justify-content: center !important;
+        cursor: pointer !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important;
+        transition: all 0.2s ease !important;
+    }
+    [data-testid="collapsedControl"]:hover {
+        background: rgba(201, 168, 76, 0.12) !important;
+        border-color: rgba(201, 168, 76, 0.5) !important;
+    }
+    [data-testid="collapsedControl"] svg {
+        fill: #C9A84C !important;
+        color: #C9A84C !important;
+        width: 18px !important;
+        height: 18px !important;
+    }
+
     [data-testid="stSidebarCollapseButton"] {
         background: rgba(255, 255, 255, 0.03) !important;
         border: 1px solid rgba(201, 168, 76, 0.22) !important;
         border-radius: 8px !important;
         transition: all 0.2s ease !important;
     }
-    [data-testid="collapsedControl"]:hover,
     [data-testid="stSidebarCollapseButton"]:hover {
         background: rgba(201, 168, 76, 0.1) !important;
         border-color: rgba(201, 168, 76, 0.4) !important;
     }
-    [data-testid="collapsedControl"] svg,
     [data-testid="stSidebarCollapseButton"] svg {
         fill: #C9A84C !important;
         color: #C9A84C !important;
