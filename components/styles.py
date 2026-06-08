@@ -30,12 +30,24 @@ def inject_styles():
         padding-top: 0 !important;
     }
 
-    #MainMenu, footer { visibility: hidden; }
+    #MainMenu, footer, header { visibility: hidden; }
     .stDeployButton { display: none !important; }
     [data-testid="stHeader"] {
         background: transparent !important;
     }
     div[data-testid="stDecoration"] { display: none !important; }
+
+    /* Force the sidebar collapse/expand toggle buttons to remain visible and interactive */
+    [data-testid="collapsedControl"],
+    [data-testid="collapsedControl"] *,
+    [data-testid="stSidebarCollapseButton"],
+    [data-testid="stSidebarCollapseButton"] * {
+        visibility: visible !important;
+    }
+    [data-testid="collapsedControl"] svg,
+    [data-testid="stSidebarCollapseButton"] svg {
+        fill: #C9A84C !important;
+    }
     .block-container {
         padding: 1.5rem 2rem 2rem 2rem !important;
         max-width: 1400px !important;
