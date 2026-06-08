@@ -30,23 +30,31 @@ def inject_styles():
         padding-top: 0 !important;
     }
 
-    #MainMenu, footer, header { visibility: hidden; }
+    #MainMenu, footer { visibility: hidden; }
     .stDeployButton { display: none !important; }
     [data-testid="stHeader"] {
+        background-color: rgba(0, 0, 0, 0) !important;
         background: transparent !important;
     }
     div[data-testid="stDecoration"] { display: none !important; }
 
-    /* Force the sidebar collapse/expand toggle buttons to remain visible and interactive */
+    /* Expose and style the sidebar collapse/expand toggle buttons */
     [data-testid="collapsedControl"],
-    [data-testid="collapsedControl"] *,
-    [data-testid="stSidebarCollapseButton"],
-    [data-testid="stSidebarCollapseButton"] * {
-        visibility: visible !important;
+    [data-testid="stSidebarCollapseButton"] {
+        background: rgba(255, 255, 255, 0.03) !important;
+        border: 1px solid rgba(201, 168, 76, 0.22) !important;
+        border-radius: 8px !important;
+        transition: all 0.2s ease !important;
+    }
+    [data-testid="collapsedControl"]:hover,
+    [data-testid="stSidebarCollapseButton"]:hover {
+        background: rgba(201, 168, 76, 0.1) !important;
+        border-color: rgba(201, 168, 76, 0.4) !important;
     }
     [data-testid="collapsedControl"] svg,
     [data-testid="stSidebarCollapseButton"] svg {
         fill: #C9A84C !important;
+        color: #C9A84C !important;
     }
     .block-container {
         padding: 1.5rem 2rem 2rem 2rem !important;
