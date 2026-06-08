@@ -1,6 +1,7 @@
 import streamlit as st
 import plotly.graph_objects as go
 from data.fetcher import fetch_stock_data, assign_sectors, NIFTY50, SP500_SAMPLE
+from components.styles import clean_html
 
 
 def render():
@@ -108,7 +109,7 @@ def render():
             """
 
         table_html += "</tbody></table></div>"
-        st.markdown(table_html, unsafe_allow_html=True)
+        st.markdown(clean_html(table_html), unsafe_allow_html=True)
 
     with tab2:
         fig = go.Figure()

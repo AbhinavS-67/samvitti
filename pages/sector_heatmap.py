@@ -4,6 +4,7 @@ import plotly.express as px
 import pandas as pd
 import numpy as np
 from data.fetcher import fetch_stock_data, assign_sectors, compute_sector_summary, NIFTY50, SP500_SAMPLE
+from components.styles import clean_html
 
 
 def render():
@@ -180,4 +181,4 @@ def render():
         </tr>
         """
     table_html += "</tbody></table></div>"
-    st.markdown(table_html, unsafe_allow_html=True)
+    st.markdown(clean_html(table_html), unsafe_allow_html=True)

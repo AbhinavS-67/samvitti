@@ -5,6 +5,7 @@ from data.fetcher import (
     fetch_stock_data, assign_sectors, fetch_fundamentals,
     NIFTY50, SP500_SAMPLE, score_label
 )
+from components.styles import clean_html
 
 
 def render():
@@ -115,7 +116,7 @@ def render():
             """
 
         table_html += "</tbody></table></div>"
-        st.markdown(table_html, unsafe_allow_html=True)
+        st.markdown(clean_html(table_html), unsafe_allow_html=True)
 
         if show_fundamentals and len(highs) > 0:
             st.markdown("<br>", unsafe_allow_html=True)
@@ -128,7 +129,7 @@ def render():
                     pe = f"{fund.get('pe_ratio', '—'):.1f}x" if isinstance(fund.get('pe_ratio'), float) else "—"
                     pb = f"{fund.get('pb_ratio', '—'):.1f}x" if isinstance(fund.get('pb_ratio'), float) else "—"
                     de = f"{fund.get('de_ratio', '—'):.0f}%" if isinstance(fund.get('de_ratio'), float) else "—"
-                    st.markdown(f"""
+                    st.markdown(clean_html(f"""
                     <div class="glass-card" style="padding:1rem;">
                         <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:#F0EBD8;margin-bottom:10px;">{r['Ticker']}</div>
                         <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:2px;">P/E</div>
@@ -138,7 +139,7 @@ def render():
                         <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:2px;margin-top:8px;">D/E</div>
                         <div style="font-family:'JetBrains Mono',monospace;font-size:16px;color:#C9A84C;">{de}</div>
                     </div>
-                    """, unsafe_allow_html=True)
+                    """), unsafe_allow_html=True)
 
     with tab2:
         fig = go.Figure()

@@ -7,6 +7,7 @@ from data.fetcher import (
     fetch_stock_data, assign_sectors, compute_sector_summary,
     NIFTY50, SP500_SAMPLE, score_label
 )
+from components.styles import clean_html
 
 PLOTLY_DARK = dict(
     paper_bgcolor="rgba(0,0,0,0)",
@@ -86,19 +87,19 @@ def render():
 
         top_highs = highs.sort_values("Momentum", ascending=False).head(7)
         if not top_highs.empty:
-            st.markdown("""
+            table_html = """
             <div class="glass-card" style="padding:0.5rem 0;">
             <table class="stock-table">
             <thead><tr>
                 <th>Ticker</th><th>Price</th><th>% from 52W High</th>
                 <th>RSI</th><th>Momentum</th><th>Vol</th>
             </tr></thead><tbody>
-            """, unsafe_allow_html=True)
+            """
 
             for _, r in top_highs.iterrows():
                 vol_badge = '<span class="badge badge-bull">↑ High Vol</span>' if r["Vol_Confirmed"] else '<span class="badge badge-gray">Avg Vol</span>'
                 score_color = "#2DD4BF" if r["Momentum"] >= 70 else "#C9A84C" if r["Momentum"] >= 40 else "#E05C5C"
-                st.markdown(f"""
+                table_html += f"""
                 <tr>
                     <td><span class="ticker-cell">{r['Ticker']}</span>
                         <div style="font-size:10px;color:rgba(255,255,255,0.25);">{r.get('Sector','')}</div></td>
@@ -113,9 +114,10 @@ def render():
                     </td>
                     <td>{vol_badge}</td>
                 </tr>
-                """, unsafe_allow_html=True)
+                """
 
-            st.markdown("</tbody></table></div>", unsafe_allow_html=True)
+            table_html += "</tbody></table></div>"
+            st.markdown(clean_html(table_html), unsafe_allow_html=True)
         else:
             st.markdown('<div class="glass-card"><p style="color:rgba(255,255,255,0.35);text-align:center;padding:2rem;">No 52W highs detected today</p></div>', unsafe_allow_html=True)
 
@@ -126,14 +128,14 @@ def render():
 
         top_lows = lows.sort_values("RSI").head(6)
         if not top_lows.empty:
-            st.markdown("""
+            table_html2 = """
             <div class="glass-card" style="padding:0.5rem 0;">
             <table class="stock-table">
             <thead><tr>
                 <th>Ticker</th><th>Price</th><th>% from 52W Low</th>
                 <th>RSI</th><th>Signal</th>
             </tr></thead><tbody>
-            """, unsafe_allow_html=True)
+            """
 
             for _, r in top_lows.iterrows():
                 if r["RSI"] < 30:
@@ -143,7 +145,7 @@ def render():
                 else:
                     sig = '<span class="badge badge-gray">Neutral</span>'
 
-                st.markdown(f"""
+                table_html2 += f"""
                 <tr>
                     <td><span class="ticker-cell">{r['Ticker']}</span>
                         <div style="font-size:10px;color:rgba(255,255,255,0.25);">{r.get('Sector','')}</div></td>
@@ -152,9 +154,10 @@ def render():
                     <td><span class="mono" style="color:{'#E05C5C' if r['RSI']<30 else 'rgba(255,255,255,0.6)'};">{r['RSI']:.0f}</span></td>
                     <td>{sig}</td>
                 </tr>
-                """, unsafe_allow_html=True)
+                """
 
-            st.markdown("</tbody></table></div>", unsafe_allow_html=True)
+            table_html2 += "</tbody></table></div>"
+            st.markdown(clean_html(table_html2), unsafe_allow_html=True)
         else:
             st.markdown('<div class="glass-card"><p style="color:rgba(255,255,255,0.35);text-align:center;padding:2rem;">No 52W lows detected today</p></div>', unsafe_allow_html=True)
 

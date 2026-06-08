@@ -1,5 +1,9 @@
 import streamlit as st
 
+def clean_html(html_str: str) -> str:
+    """Strip leading and trailing whitespace from each line to prevent Streamlit from interpreting HTML as Markdown code blocks."""
+    return "\n".join(line.strip() for line in html_str.splitlines())
+
 def inject_styles():
     st.markdown("""
     <style>
