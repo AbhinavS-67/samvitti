@@ -30,8 +30,12 @@ def inject_styles():
         padding-top: 0 !important;
     }
 
-    /* ─── Hide Streamlit chrome ─── */
-    #MainMenu, footer, header { visibility: hidden; }
+    #MainMenu, footer { visibility: hidden; }
+    .stDeployButton { display: none !important; }
+    [data-testid="stHeader"] {
+        background: transparent !important;
+    }
+    div[data-testid="stDecoration"] { display: none !important; }
     .block-container {
         padding: 1.5rem 2rem 2rem 2rem !important;
         max-width: 1400px !important;
