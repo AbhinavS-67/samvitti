@@ -12,6 +12,7 @@ def render():
     </div>
     """, unsafe_allow_html=True)
 
+    market = st.session_state.get("market", "India (NSE)")
     tickers = get_active_tickers()
 
     fcol1, fcol2, fcol3 = st.columns(3)

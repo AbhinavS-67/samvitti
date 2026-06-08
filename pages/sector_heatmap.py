@@ -15,6 +15,7 @@ def render():
     </div>
     """, unsafe_allow_html=True)
 
+    market = st.session_state.get("market", "India (NSE)")
     tickers = get_active_tickers()
 
     metric = st.selectbox("Color by", ["Avg Momentum", "Avg RSI", "Breakout %", "Breakdown %"], key="hm_metric")
