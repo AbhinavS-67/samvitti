@@ -16,6 +16,9 @@ page = render_sidebar()
 
 if page == "Dashboard":
     dashboard.render()
+elif page == "Market Screener":
+    from pages import market_screener
+    market_screener.render()
 elif page == "Breakouts":
     breakouts.render()
 elif page == "Breakdowns":

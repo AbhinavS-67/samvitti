@@ -44,6 +44,24 @@ def render_sidebar():
             label_visibility="collapsed"
         )
 
+        if scope == "Market Indices":
+            from data.fetcher import INDICES_MAP
+            if "active_index" not in st.session_state:
+                st.session_state.active_index = "Nifty 50"
+            st.markdown('<div style="margin-top:0.2rem; margin-bottom:0.4rem; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:rgba(255,255,255,0.2); padding-left:4px;">Select Index</div>', unsafe_allow_html=True)
+            active_index = st.selectbox(
+                "Select Index",
+                options=list(INDICES_MAP.keys()),
+                key="active_index",
+                label_visibility="collapsed"
+            )
+            if active_index == "US (S&P 500)":
+                st.session_state["market"] = "US (S&P 500)"
+            else:
+                st.session_state["market"] = "India (NSE)"
+        else:
+            st.session_state["market"] = "Both"
+
         if scope == "Custom Search":
             default_options = [
                 "RELIANCE.NS", "TCS.NS", "HDFCBANK.NS", "INFOSYS.NS", "SBIN.NS",
@@ -74,6 +92,7 @@ def render_sidebar():
         # Navigation
         pages = [
             ("Dashboard",       "🏠", "Overview & signals"),
+            ("Market Screener", "🔍", "Signals & Catalysts"),
             ("Breakouts",       "📈", "52W Highs"),
             ("Breakdowns",      "📉", "52W Lows"),
             ("Sector Heatmap",  "🔥", "Sector clusters"),

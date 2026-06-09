@@ -27,6 +27,79 @@ SP500_SAMPLE = [
     "ORCL","INTC","CAT","IBM","GE","BA","MMM","GS","MS","BLK",
 ]
 
+NIFTY_NEXT_50 = [
+    "HAL.NS", "TATAPOWER.NS", "IOC.NS", "PFC.NS", "REC.NS", "DLF.NS", 
+    "CHOLAFIN.NS", "SIEMENS.NS", "GAIL.NS", "VEDL.NS", "SHREECEM.NS", 
+    "HAVELLS.NS", "TRENT.NS", "AMBUJACEM.NS", "PNB.NS", "ABB.NS", 
+    "ICICIPRULI.NS", "LICI.NS", "DMART.NS", "TATACOMM.NS", "COLPAL.NS", 
+    "MCDOWELL-N.NS", "SRF.NS", "MARICO.NS", "CANBK.NS", "BANKBARODA.NS", 
+    "BERGEPAINT.NS", "GODREJCP.NS", "PIDILITIND.NS", "ICICIGI.NS", "INDIGO.NS", 
+    "IRCTC.NS", "MOTHERSON.NS", "PAGEIND.NS", "ZOMATO.NS", "JIOFIN.NS", 
+    "BOSCHLTD.NS", "ADANIENSOL.NS", "ADANIGREEN.NS", "MUTHOOTFIN.NS"
+]
+
+NIFTY_MIDCAP_100 = [
+    "POLYCAB.NS", "KEI.NS", "SUZLON.NS", "AUBANK.NS", "FEDERALBNK.NS", 
+    "MRF.NS", "IPCALAB.NS", "BATAINDIA.NS", "COFORGE.NS", "PERSISTENT.NS", 
+    "DIXON.NS", "MAXHEALTH.NS", "VOLTAS.NS", "BHEL.NS", "GMRINFRA.NS", 
+    "TATAELXSI.NS", "ASHOKLEY.NS", "IRFC.NS", "RVNL.NS", "YESBANK.NS", 
+    "OBEROIRLTY.NS", "LUPIN.NS", "CONCOR.NS", "DALBHARAT.NS", "ESCORTS.NS", 
+    "HINDPETRO.NS", "IDFCFIRSTB.NS", "NMDC.NS", "OIL.NS", 
+    "PETRONET.NS", "SJVN.NS", "TATACOMM.NS", "TVSMOTOR.NS", "UNIONBANK.NS"
+]
+
+NIFTY_SMALLCAP_100 = [
+    "RITES.NS", "IRCON.NS", "HUDCO.NS", "CENTURYTEX.NS", "RADICO.NS", 
+    "MCX.NS", "CDSL.NS", "BSE.NS", "ANGELONE.NS", "SUVENPHAR.NS", 
+    "MAHABANK.NS", "KARURVYSYA.NS", "CESC.NS", "NLCINDIA.NS", "CYIENT.NS", 
+    "SONATSOFTW.NS", "PPLPHARMA.NS", "CAMS.NS", "KEC.NS", "MANAPPURAM.NS", 
+    "GLENMARK.NS", "HFCL.NS", "IOB.NS", "ITI.NS", "J&KBANK.NS", "PNBHOUSING.NS", 
+    "Centralbank.NS", "POONAWALLA.NS", "RAMCOCEM.NS", "TATAINVEST.NS"
+]
+
+NIFTY_BANK = [
+    "HDFCBANK.NS", "ICICIBANK.NS", "AXISBANK.NS", "KOTAKBANK.NS", "SBIN.NS", 
+    "INDUSINDBK.NS", "PNB.NS", "BANKBARODA.NS", "FEDERALBNK.NS", 
+    "IDFCFIRSTB.NS", "AUBANK.NS", "BANDHANBNK.NS"
+]
+
+NIFTY_IT = [
+    "TCS.NS", "INFY.NS", "WIPRO.NS", "HCLTECH.NS", "TECHM.NS", 
+    "LTIM.NS", "COFORGE.NS", "PERSISTENT.NS", "MPHASIS.NS", "KPITTECH.NS"
+]
+
+NIFTY_AUTO = [
+    "TATAMOTORS.NS", "M&M.NS", "MARUTI.NS", "HEROMOTOCO.NS", "EICHERMOT.NS", 
+    "BAJAJ-AUTO.NS", "TVSMOTOR.NS", "TIINDIA.NS", "ASHOKLEY.NS", "BHARATFORG.NS", 
+    "BALKRISIND.NS", "BOSCHLTD.NS", "SAMVARDHNA.NS", "SONACOMS.NS"
+]
+
+NIFTY_METAL = [
+    "TATASTEEL.NS", "JSWSTEEL.NS", "HINDALCO.NS", "COALINDIA.NS", "VEDL.NS", 
+    "NMDC.NS", "SAIL.NS", "HINDZINC.NS", "JSL.NS", "NATIONALUM.NS", 
+    "HINDCOPPER.NS", "WELCORP.NS", "APLAPOLLO.NS", "RATNAMANI.NS"
+]
+
+NIFTY_PHARMA = [
+    "SUNPHARMA.NS", "CIPLA.NS", "DRREDDY.NS", "DIVISLAB.NS", "APOLLOHOSP.NS", 
+    "LUPIN.NS", "AUROPHARMA.NS", "ALKEM.NS", "GLAND.NS", "LAURUSLABS.NS", 
+    "ZYDUSLIFE.NS", "BIOCON.NS", "IPCALAB.NS", "SYNGENE.NS", "GLENMARK.NS", 
+    "TORNTPHARM.NS", "GRANULES.NS", "ABBOTINDIA.NS", "JBCHEPHARM.NS"
+]
+
+INDICES_MAP = {
+    "Nifty 50": NIFTY50,
+    "Nifty Next 50": NIFTY_NEXT_50,
+    "Nifty Midcap 100": NIFTY_MIDCAP_100,
+    "Nifty Smallcap 100": NIFTY_SMALLCAP_100,
+    "Nifty Bank": NIFTY_BANK,
+    "Nifty IT": NIFTY_IT,
+    "Nifty Auto": NIFTY_AUTO,
+    "Nifty Metal": NIFTY_METAL,
+    "Nifty Pharma": NIFTY_PHARMA,
+    "US (S&P 500)": SP500_SAMPLE,
+}
+
 SECTOR_MAP_IN = {
     "RELIANCE.NS":"Energy","ONGC.NS":"Energy","BPCL.NS":"Energy","COALINDIA.NS":"Energy",
     "POWERGRID.NS":"Utilities","NTPC.NS":"Utilities",
@@ -105,6 +178,11 @@ def fetch_stock_data(tickers: list, period: str = "1y") -> pd.DataFrame:
             # 1-month return
             ret_1m = (curr / close.iloc[-21] - 1) * 100 if len(close) > 21 else 0.0
             ret_5d = (curr / close.iloc[-6]  - 1) * 100 if len(close) > 6  else 0.0
+            ret_1d = (curr / close.iloc[-2]  - 1) * 100 if len(close) > 1  else 0.0
+
+            # 50 DMA
+            ma50 = close.rolling(50).mean().iloc[-1] if len(close) >= 50 else curr
+            is_above_ma50 = bool(curr > ma50)
 
             is_52w_high = pct_from_high >= -1.5   # within 1.5% of 52W high
             is_52w_low  = pct_from_low  <= 5.0    # within 5% of 52W low
@@ -122,9 +200,12 @@ def fetch_stock_data(tickers: list, period: str = "1y") -> pd.DataFrame:
                 "Vol_Ratio":     round(vol_ratio, 2),
                 "Ret_1M":        round(ret_1m, 2),
                 "Ret_5D":        round(ret_5d, 2),
+                "Ret_1D":        round(ret_1d, 2),
                 "Is_52W_High":   is_52w_high,
                 "Is_52W_Low":    is_52w_low,
                 "Vol_Confirmed": vol_ratio >= 1.5,
+                "MA50":          round(ma50, 2),
+                "Above_MA50":    is_above_ma50,
             })
         except Exception:
             continue
@@ -155,13 +236,41 @@ def get_active_tickers() -> list:
     if scope == "Custom Search":
         return st.session_state.get("custom_tickers", ["RELIANCE.NS", "AAPL", "MSFT", "TCS.NS"])
     else:
-        market = st.session_state.get("market", "India (NSE)")
-        tickers = []
-        if market in ["India (NSE)", "Both"]:
-            tickers += NIFTY50
-        if market in ["US (S&P 500)", "Both"]:
-            tickers += SP500_SAMPLE
-        return tickers
+        active_index = st.session_state.get("active_index", "Nifty 50")
+        if active_index == "Both (NSE + S&P 500)":
+            return NIFTY50 + SP500_SAMPLE
+        return INDICES_MAP.get(active_index, NIFTY50)
+
+
+@st.cache_data(ttl=300, show_spinner=False)
+def fetch_index_data() -> dict:
+    """Fetch live price and daily changes for key indices: Nifty 50, Sensex, Nifty Bank, India VIX."""
+    indices = {
+        "Nifty 50": "^NSEI",
+        "SENSEX": "^BSESN",
+        "Nifty Bank": "^NSEBANK",
+        "India VIX": "^INDIAVIX"
+    }
+    results = {}
+    for label, ticker in indices.items():
+        try:
+            t = yf.Ticker(ticker)
+            hist = t.history(period="5d")
+            if len(hist) >= 2:
+                curr = hist["Close"].iloc[-1]
+                prev = hist["Close"].iloc[-2]
+                change = curr - prev
+                pct = (change / prev) * 100
+                results[label] = {
+                    "price": curr,
+                    "change": change,
+                    "pct": pct
+                }
+            else:
+                results[label] = {"price": 0.0, "change": 0.0, "pct": 0.0}
+        except Exception:
+            results[label] = {"price": 0.0, "change": 0.0, "pct": 0.0}
+    return results
 
 
 def get_sector(ticker: str, market: str) -> str:
@@ -210,3 +319,25 @@ def fmt_cap(cap):
     if cap >= 1e9:  return f"₹{cap/1e9:.1f}B"
     if cap >= 1e6:  return f"₹{cap/1e6:.1f}M"
     return str(cap)
+
+
+@st.cache_data(ttl=3600, show_spinner=False)
+def fetch_screener_details(ticker: str) -> dict:
+    """Fetch cached business details and news for the screener card view."""
+    try:
+        t = yf.Ticker(ticker)
+        info = t.info
+        news = t.news
+        return {
+            "name": info.get("longName", ticker),
+            "sector": info.get("sector", "Other"),
+            "summary": info.get("longBusinessSummary", "No business summary available."),
+            "news": news
+        }
+    except Exception:
+        return {
+            "name": ticker,
+            "sector": "Other",
+            "summary": "Business description not available.",
+            "news": []
+        }

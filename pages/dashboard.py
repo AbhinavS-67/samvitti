@@ -38,15 +38,13 @@ def render():
     </div>
     """, unsafe_allow_html=True)
 
-    # ── Market & Filters ─────────────────────────────────────────────────
-    col_a, col_b, col_c = st.columns([2, 2, 4])
+    # ── Filters (Market is sidebar-controlled) ───────────────────────────
+    col_a, col_b = st.columns([3, 9])
     with col_a:
-        market = st.selectbox("Market", ["India (NSE)", "US (S&P 500)", "Both"], label_visibility="visible")
-    with col_b:
-        view_mode = st.selectbox("View", ["Brief Mode", "Detailed Mode"])
-
-    st.session_state["market"] = market
+        view_mode = st.selectbox("View Mode", ["Brief Mode", "Detailed Mode"], label_visibility="visible")
+    
     st.session_state["view_mode"] = view_mode
+    market = st.session_state.get("market", "India (NSE)")
 
     # ── Fetch data ─────────────────────────────────────────────────────────
     tickers = get_active_tickers()
@@ -63,13 +61,21 @@ def render():
     lows  = df[df["Is_52W_Low"]  == True]
     vol_confirmed = df[df["Vol_Confirmed"] == True]
 
-    # ── KPI Row ────────────────────────────────────────────────────────────
-    st.markdown("""<div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:1.5rem;">""", unsafe_allow_html=True)
+    # Calculate Market Breadth metrics
+    advances = len(df[df["Ret_1D"] > 0])
+    declines = len(df[df["Ret_1D"] < 0])
+    above_ma50_count = len(df[df["Above_MA50"] == True])
+    above_ma50_pct = (above_ma50_count / len(df)) * 100 if len(df) > 0 else 0.0
+
+    # ── KPI Row (With Market Breadth Gauges) ──────────────────────────────
+    st.markdown("""<div style="display:grid; grid-template-columns:repeat(6,1fr); gap:12px; margin-bottom:1.5rem;">""", unsafe_allow_html=True)
     st.markdown(
-        kpi("52W Breakouts", len(highs), f"↑ Volume confirmed: {len(highs[highs['Vol_Confirmed']==True])}", "up", "teal") +
+        kpi("52W Breakouts", len(highs), f"↑ Vol Confirmed: {len(highs[highs['Vol_Confirmed']==True])}", "up", "teal") +
         kpi("52W Breakdowns", len(lows), f"↓ Oversold (RSI<30): {len(lows[lows['RSI']<30])}", "down", "red") +
-        kpi("Stocks Tracked", len(df), "Custom Search" if st.session_state.get("data_scope") == "Custom Search" else f"Indices: {market}", "neutral", "gold") +
-        kpi("Avg Momentum", f"{df['Momentum'].mean():.0f}", "Score out of 100", "neutral", "blue"),
+        kpi("A/D Ratio", f"{advances}:{declines}", f"Adv: {advances} | Dec: {declines}", "neutral", "gold") +
+        kpi("Above 50 DMA", f"{above_ma50_pct:.1f}%", f"{above_ma50_count}/{len(df)} stocks", "up" if above_ma50_pct >= 50 else "down", "blue") +
+        kpi("Avg Momentum", f"{df['Momentum'].mean():.0f}", "Score out of 100", "neutral", "blue") +
+        kpi("Stocks Tracked", len(df), f"Scope: {st.session_state.get('data_scope', 'Market Indices')}", "neutral", "gold"),
         unsafe_allow_html=True
     )
     st.markdown("</div>", unsafe_allow_html=True)
@@ -79,7 +85,19 @@ def render():
 
     with left:
         # Top Breakouts
-        st.markdown('<p class="section-title">Top Breakouts Today</p><p class="section-sub">Stocks at or near 52-week highs</p>', unsafe_allow_html=True)
+        col_hdr1, col_btn1 = st.columns([3, 1])
+        with col_hdr1:
+            st.markdown('<p class="section-title">Top Breakouts Today</p><p class="section-sub">Stocks at or near 52-week highs</p>', unsafe_allow_html=True)
+        with col_btn1:
+            if not highs.empty:
+                csv_highs = highs.to_csv(index=False).encode('utf-8')
+                st.download_button(
+                    label="📥 Export CSV",
+                    data=csv_highs,
+                    file_name="dashboard_breakouts.csv",
+                    mime="text/csv",
+                    key="dl_dash_breakouts"
+                )
 
         top_highs = highs.sort_values("Momentum", ascending=False).head(7)
         if not top_highs.empty:
@@ -120,7 +138,19 @@ def render():
         st.markdown("<br>", unsafe_allow_html=True)
 
         # Top Breakdowns
-        st.markdown('<p class="section-title">Watch: Breakdown Stocks</p><p class="section-sub">Near 52-week lows — risk flags & reversal watch</p>', unsafe_allow_html=True)
+        col_hdr2, col_btn2 = st.columns([3, 1])
+        with col_hdr2:
+            st.markdown('<p class="section-title">Watch: Breakdown Stocks</p><p class="section-sub">Near 52-week lows — risk flags & reversal watch</p>', unsafe_allow_html=True)
+        with col_btn2:
+            if not lows.empty:
+                csv_lows = lows.to_csv(index=False).encode('utf-8')
+                st.download_button(
+                    label="📥 Export CSV",
+                    data=csv_lows,
+                    file_name="dashboard_breakdowns.csv",
+                    mime="text/csv",
+                    key="dl_dash_breakdowns"
+                )
 
         top_lows = lows.sort_values("RSI").head(6)
         if not top_lows.empty:
