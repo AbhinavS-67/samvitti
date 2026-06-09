@@ -70,14 +70,43 @@ def render_sidebar():
             if "custom_tickers" not in st.session_state:
                 st.session_state.custom_tickers = ["RELIANCE.NS", "AAPL", "MSFT", "TCS.NS"]
 
-            with st.form("add_ticker_form", clear_on_submit=True, border=False):
-                new_ticker = st.text_input("Add Ticker (e.g. INFY.NS, TSLA)", key="new_ticker_input")
-                submitted = st.form_submit_button("Add Stock", use_container_width=True)
-                if submitted and new_ticker:
-                    clean_ticker = new_ticker.strip().upper()
-                    if clean_ticker not in st.session_state.custom_tickers:
-                        st.session_state.custom_tickers.append(clean_ticker)
-                        st.toast(f"Added {clean_ticker} to custom list!")
+            from data.fetcher import search_yf_tickers
+
+            with st.form("search_ticker_form", clear_on_submit=True, border=False):
+                search_query = st.text_input("Search Ticker/Company Name", placeholder="e.g. reliance, apple")
+                search_submitted = st.form_submit_button("Search Ticker", use_container_width=True)
+                if search_submitted and search_query:
+                    st.session_state.last_search_query = search_query.strip()
+                    st.rerun()
+
+            last_q = st.session_state.get("last_search_query")
+            if last_q:
+                results = search_yf_tickers(last_q)
+                if results:
+                    options_list = [f"{symbol} ({name} - {exchange})" for symbol, name, exchange in results]
+                    selected_rec = st.selectbox(
+                        f"Matches for '{last_q}'",
+                        options=options_list,
+                        key="recommendation_select"
+                    )
+                    
+                    col_add, col_cancel = st.columns(2)
+                    with col_add:
+                        if st.button("Add Ticker", use_container_width=True, key="add_rec_btn"):
+                            symbol = selected_rec.split(" ")[0]
+                            if symbol not in st.session_state.custom_tickers:
+                                st.session_state.custom_tickers.append(symbol)
+                                st.toast(f"Added {symbol} to custom search list!")
+                            st.session_state.last_search_query = None
+                            st.rerun()
+                    with col_cancel:
+                        if st.button("Cancel", use_container_width=True, key="cancel_rec_btn"):
+                            st.session_state.last_search_query = None
+                            st.rerun()
+                else:
+                    st.info(f"No tickers found for '{last_q}'")
+                    if st.button("Clear Search", use_container_width=True, key="clear_search_btn"):
+                        st.session_state.last_search_query = None
                         st.rerun()
 
             selected_tickers = st.multiselect(

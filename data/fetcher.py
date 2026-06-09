@@ -341,3 +341,26 @@ def fetch_screener_details(ticker: str) -> dict:
             "summary": "Business description not available.",
             "news": []
         }
+
+
+def search_yf_tickers(query: str) -> list:
+    """Query Yahoo Finance search API to return list of (symbol, name, exchange)."""
+    if not query:
+        return []
+    url = f"https://query2.finance.yahoo.com/v1/finance/search?q={query}&quotesCount=6"
+    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"}
+    try:
+        import requests
+        r = requests.get(url, headers=headers, timeout=5)
+        if r.status_code == 200:
+            quotes = r.json().get("quotes", [])
+            results = []
+            for q in quotes:
+                symbol = q.get("symbol")
+                name = q.get("longname") or q.get("shortname") or "Unknown"
+                exchange = q.get("exchange", "Unknown")
+                results.append((symbol, name, exchange))
+            return results
+    except Exception:
+        pass
+    return []
